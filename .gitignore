@@ -1,0 +1,15 @@
+# Environments
+.venv
+venv
+
+# Caching
+__pycache__/
+
+# Vscode
+.vscode
+
+# Outputs
+outputs/
+
+# Misc
+test.py
