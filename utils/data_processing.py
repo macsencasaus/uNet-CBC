@@ -40,16 +40,19 @@ def get_normalized_data(hdf_file_name: str) -> tuple:
     with h5py.File(hdf_file_path, 'r') as hdf_file:
 
         # Input data
-        inputs_h1 = array(Group(hdf_file['injection_samples'])['h1_strain'])[:, newaxis]
-        inputs_l1 = array(Group(hdf_file['injection_samples'])['l1_strain'])[:, newaxis]
+        inputs_h1 = array((hdf_file['injection_samples'])['h1_strain'])[:,:,newaxis]
+        inputs_l1 = array((hdf_file['injection_samples'])['l1_strain'])[:,:,newaxis]
 
         # Label data   
-        labels_h1 = array(Group(hdf_file['injection_parameters'])['h1_signal'])[:, newaxis]
-        labels_l1 = array(Group(hdf_file['injection_parameters'])['l1_signal'])[:, newaxis]
+        labels_h1 = array((hdf_file['injection_parameters'])['h1_signal'])[:,:,newaxis]
+        labels_l1 = array((hdf_file['injection_parameters'])['l1_signal'])[:,:,newaxis]
 
         # Noise samples
-        noise_samples_h1 = array(Group(hdf_file['noise_samples'])['h1_strain'])[:, newaxis]
-        noise_samples_l1 = array(Group(hdf_file['noise_samples'])['l1_strain'])[:, newaxis]
+        noise_samples_h1 = array((hdf_file['noise_samples'])['h1_strain'])[:,:,newaxis]
+        noise_samples_l1 = array((hdf_file['noise_samples'])['l1_strain'])[:,:,newaxis]
+        
+        # Injection Snr
+        injection_snr = array((hdf_file['injection_parameters'])['injection_snr'])
 
     # Merging and normalizing input data
     inputs = concatenate((inputs_h1, inputs_l1), axis = 2)
@@ -60,6 +63,8 @@ def get_normalized_data(hdf_file_name: str) -> tuple:
     labels = concatenate((labels_h1, labels_l1), axis=2)
     for idx, label in enumerate(labels):
         labels[idx] /= np.max(np.abs(label))
+        labels[idx] *= injection_snr[idx]
+    labels /= np.max(np.abs(labels))
     labels = (labels + 1) / 2
 
     # Merging and normalizing noise samples
@@ -94,16 +99,16 @@ def get_raw_data(hdf_file_name: str) -> tuple:
     with h5py.File(hdf_file_path, 'r') as hdf_file:
 
         # Input data
-        inputs_h1 = array(Group(hdf_file['injection_samples'])['h1_strain'])
-        inputs_l1 = array(Group(hdf_file['injection_samples'])['l1_strain'])
+        inputs_h1 = array((hdf_file['injection_samples'])['h1_strain'])[:,:,newaxis]
+        inputs_l1 = array((hdf_file['injection_samples'])['l1_strain'])[:,:,newaxis]
 
         # Label data   
-        labels_h1 = array(Group(hdf_file['injection_parameters'])['h1_signal'])
-        labels_l1 = array(Group(hdf_file['injection_parameters'])['l1_signal'])
+        labels_h1 = array((hdf_file['injection_parameters'])['h1_signal'])[:,:,newaxis]
+        labels_l1 = array((hdf_file['injection_parameters'])['l1_signal'])[:,:,newaxis]
 
         # Noise samples
-        noise_samples_h1 = array(Group(hdf_file['noise_samples'])['h1_strain'])
-        noise_samples_l1 = array(Group(hdf_file['noise_samples'])['l1_strain'])
+        noise_samples_h1 = array((hdf_file['noise_samples'])['h1_strain'])[:,:,newaxis]
+        noise_samples_l1 = array((hdf_file['noise_samples'])['l1_strain'])[:,:,newaxis]
 
     # Merging and normalizing input data
     inputs = concatenate((inputs_h1, inputs_l1), axis = 2)
@@ -137,14 +142,14 @@ def get_injection_parameters(hdf_file_name: str) -> dict:
     hdf_file_check(hdf_file_path)
 
     with h5py.File(hdf_file_path, 'r') as hdf_file:
-        keys = ('mass1', 'mass2', 'spin1z', 'spin2z', 'ra', 'dec', 'cao_phase', 'inclination', 'polarization', 'injection_snr')
+        keys = ('mass1', 'mass2', 'spin1z', 'spin2z', 'ra', 'dec', 'coa_phase', 'inclination', 'polarization', 'injection_snr')
         injection_parameters_dict = {}
         for key in keys:
-            injection_parameters_dict[key] = array(Group(hdf_file['injection_parameters'])[key])
+            injection_parameters_dict[key] = array((hdf_file['injection_parameters'])[key])
     
     return injection_parameters_dict
 
-def get_event_time(hdf_file_name: str, idx: int) -> float:
+def get_time_info(hdf_file_name: str, idx: int) -> float:
     """
     Retrieves the event time of an event of a given sample
 
@@ -161,5 +166,13 @@ def get_event_time(hdf_file_name: str, idx: int) -> float:
     hdf_file_check(hdf_file_path)
 
     with h5py.File(hdf_file_path, 'r') as hdf_file:
-        event_times = Group(hdf_file['injection_samples'])['event_time']
-        return float(Dataset(event_times)[idx])
+        seconds_before_event = float(hdf_file['static_arguments'].attrs['seconds_before_event'])
+        seconds_after_event = float(hdf_file['static_arguments'].attrs['seconds_after_event'])
+        sample_length = float(hdf_file['static_arguments'].attrs['sample_length'])
+        target_sampling_rate = float(hdf_file['static_arguments'].attrs['target_sampling_rate'])
+        
+    return dict(seconds_before_event=seconds_before_event,
+                seconds_after_event=seconds_after_event,
+                sample_length=sample_length,
+                target_sampling_rate=target_sampling_rate)
+    

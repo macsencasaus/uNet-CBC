@@ -8,7 +8,7 @@ Plots the input, label, and prediction of a certain sample in the testing sample
 
 import argparse
 import numpy as np
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import time
 
 from utils.configfiles import read_json_config
@@ -61,5 +61,23 @@ if __name__ == '__main__':
 
     # Get event time
     event_time = get_event_time(hdf_file_name, args.sample_id)
+    signal_length = np.arange(0, IMG_SIZE) / POLLING_RATE - 
+
     # Create figure
-         
+    fig, ax1 = plt.subplots(nrows=3, ncols=2)
+    
+    ax1[0][0].set_ylabel('Whitened Signal Strain', color = 'C0', fontsize= 8)   
+    ax1[1][0].set_ylabel('Raw Signal Strain', color = 'C1', fontsize= 8)
+    ax1[2][0].set_ylabel('U-Net Prediction Strain', color = 'C2', fontsize= 8)
+    ax1[0][1].set_yticklabels([])
+    ax1[1][1].set_yticklabels([])
+    ax1[2][1].set_yticklabels([])
+    ax1[0][1].tick_params(left = False)
+    ax1[1][1].tick_params(left = False)
+    ax1[2][1].tick_params(left = False)
+        
+    for idx, _ in enumerate(['H1', 'L1']):
+      
+      ax1[0][idx].set_title(_)
+      
+      ax1[0][idx].plot(time, X_train[image_x,:,i])    

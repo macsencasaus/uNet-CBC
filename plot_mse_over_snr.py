@@ -63,7 +63,7 @@ if __name__ == '__main__':
     def mse(actual: np.ndarray, predictions: np.ndarray) -> float:
         return ((actual - predictions) ** 2).mean()
     
-    mses = np.array([mse(y, pred) for y, pred in zip(y_test, preds)])
+    mses = np.array(map(mse, zip(y_test, preds)))
 
     # Plot and save figure
     plt.scatter(snrs, mses, s=10)
