@@ -88,5 +88,3 @@ if __name__ == '__main__':
 
     # Evaluating model against accuracy metrics
     model.evaluate(X_test, y_test, batch_size=config['batch_size'])
-
-    
