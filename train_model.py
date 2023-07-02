@@ -11,8 +11,10 @@ import tensorflow as tf
 import argparse
 import time
 
+from keras.optimizers import Adam
+
 from utils.configfiles import read_json_config
-from utils.data_processing import get_normalized_data
+from utils.data_processing import get_normalized_data, get_time_info
 from utils.model import get_model
 
 # -----------------------------------------------------------------------------
@@ -72,29 +74,45 @@ if __name__ == '__main__':
     # ACQUIRING, COMPILING, AND TRAINING THE 
     # -------------------------------------------------------------------------
 
+    # Get time data
+    time_info = get_time_info(hdf_file_name, 0)
+    sample_length = time_info['sample_length']
+    target_sampling_rate = time_info['target_sampling_rate']
+    img_size = int(sample_length * target_sampling_rate)
+    
     # Load model
     print('Loading model... ', end='', flush=True)
-    model = get_model()
+    model = get_model(img_size=img_size)
     print('Done!', flush=True)
 
     # Compile model
+    learning_rate = float(config['learning_rate'])
+    loss = str(config['loss'])
+    accuracy_metrics = list(config['accuracy_metrics'])
     print('Compiling model... ', end='', flush=True)
-    model.compile(learning_rate=config['learning_rate'], loss=config['loss'], accuracy_metrics=config['accuracy_metrics'])
+    print(accuracy_metrics)
+    model.compile(optimizer=Adam(learning_rate=learning_rate), loss=loss, metrics=accuracy_metrics)
     print('Done!', flush=True)
 
     # Fit model
     print('')
     print('FITTING MODEL: ', flush=True)
     print('')
-    model.fit(X_train, y_train, validation_split=config['validation_split'], epochs=config['epochs'], batch_size=config['batch_size'])
+    validation_split = float(config['validation_split'])
+    epochs = int(config['epochs'])
+    batch_size = int(config['batch_size'])
+    model.fit(X_train, y_train, validation_split=validation_split, epochs=epochs, batch_size=batch_size)
+    print('')
 
     # Save model
     if args.save_model:
         print('Saving model... ', end='', flush=True)
-        model_file_path = f"outputs/models/{config['model_name']}"
+        model_name = str(config['model_name'])
+        model_file_path = f"outputs/models/{model_name}"
         model.save(model_file_path)
         print('Done!', flush=True)
 
     # Print total runtime
-    print('Total runtime: {:.1f}.'.format(time.time()-script_start))
+    print('')
+    print('Total runtime: {:.1f}s'.format(time.time()-script_start))
     print('')
