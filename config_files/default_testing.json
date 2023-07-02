@@ -1,6 +1,6 @@
 {
     "random_seed": 42,
-    "testing_hdf_file_name": "default_testing.hdf",
+    "testing_hdf_file_name": "test.hdf",
     "model_name": "model.h5",
-    "batch_size": null
+    "batch_size": 1
 }

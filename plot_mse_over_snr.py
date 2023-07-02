@@ -9,9 +9,10 @@ Graphs the relationship between mse and snr of the entire testing set
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+import os
 
 from utils.configfiles import read_json_config
-from utils.data_processing import get_normalized_data, get_injection_parameters
+from utils.data_processing import get_raw_data, get_injection_parameters
 
 # -----------------------------------------------------------------------------
 # FUNCTIONS DEFINITIONS
@@ -46,15 +47,17 @@ if __name__ == '__main__':
     # ACQUIRING DATA & GRAPHING
     # -------------------------------------------------------------------------
 
+    # Get actual
+    hdf_file_name = config['testing_hdf_file_name']
+    labels = get_raw_data(hdf_file_name)[1]
+
     # Get predictions
-    model_name = config['model']
+    model_name = config['model_name']
     preds_name = f'{model_name[:-3]}_predictions.npy'
     preds_path = f'outputs/predictions/{preds_name}'
     preds = np.load(preds_path)
-
-    # Get actual
-    hdf_file_name = config['testing_hdf_file_name']
-    y_test = get_normalized_data(hdf_file_name)[1]
+    preds = preds * 2 - 1
+    preds = map(lambda x: x/np.max(np.abs(x)), preds)
 
     # Get snr values
     snrs = np.array(get_injection_parameters(hdf_file_name)['injection_snr'])
@@ -63,18 +66,24 @@ if __name__ == '__main__':
     def mse(actual: np.ndarray, predictions: np.ndarray) -> float:
         return ((actual - predictions) ** 2).mean()
     
-    mses = np.array(map(mse, zip(y_test, preds)))
+    mses = np.array(list(map(mse, labels, preds)))[:len(snrs)]
 
     # Plot and save figure
     plt.scatter(snrs, mses, s=10)
     plt.xlim(5,20)
 
     plt.xlabel('Signal-to-Noise Ratio', fontsize=14)
-    plt.ylabel('Mean Square Error', fontsize=14)
+    plt.ylabel('Mean Squared Error', fontsize=14)
     plt.title('MSE vs. SNR', fontsize=14, y=1.05)
+    plt.gcf().set_size_inches(10,8,forward=True)
     
     print('Saving figure... ', end='', flush=True)
     figure_name = f'{model_name[:-3]}_mse_vs_snr.png'
     figure_path = f'outputs/figures/{figure_name}'
-    plt.savefig(figure_path)
+    
+    try:
+        plt.savefig(figure_path)
+    except FileNotFoundError:
+        os.mkdir('outputs/figures')
+        plt.savefig(figure_path)
     print('Done!', flush=True)
