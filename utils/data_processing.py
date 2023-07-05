@@ -135,6 +135,8 @@ def get_injection_parameters(hdf_file_name: str) -> dict:
 
     Returns:
         Numpy array of dictionaries of the injection parameters
+
+       Numpy array of dictionaries of the injection parameters
     """
 
     hdf_file_path = f'hdf/{hdf_file_name}'
