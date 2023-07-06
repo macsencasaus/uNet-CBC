@@ -39,19 +39,19 @@ def get_normalized_data(hdf_file_name: str) -> tuple:
     with h5py.File(hdf_file_path, 'r') as hdf_file:
 
         # Input data
-        inputs_h1 = array((hdf_file['injection_samples'])['h1_strain'])[:,:,newaxis]
-        inputs_l1 = array((hdf_file['injection_samples'])['l1_strain'])[:,:,newaxis]
+        inputs_h1 = array(hdf_file['injection_samples']['h1_strain'])[:,:,newaxis]
+        inputs_l1 = array(hdf_file['injection_samples']['l1_strain'])[:,:,newaxis]
 
         # Label data   
-        labels_h1 = array((hdf_file['injection_parameters'])['h1_signal'])[:,:,newaxis]
-        labels_l1 = array((hdf_file['injection_parameters'])['l1_signal'])[:,:,newaxis]
+        labels_h1 = array(hdf_file['injection_parameters']['h1_signal'])[:,:,newaxis]
+        labels_l1 = array(hdf_file['injection_parameters']['l1_signal'])[:,:,newaxis]
 
         # Noise samples
-        noise_samples_h1 = array((hdf_file['noise_samples'])['h1_strain'])[:,:,newaxis]
-        noise_samples_l1 = array((hdf_file['noise_samples'])['l1_strain'])[:,:,newaxis]
+        noise_samples_h1 = array(hdf_file['noise_samples']['h1_strain'])[:,:,newaxis]
+        noise_samples_l1 = array(hdf_file['noise_samples']['l1_strain'])[:,:,newaxis]
         
         # Injection snr
-        injection_snr = array((hdf_file['injection_parameters'])['injection_snr'])
+        injection_snr = array(hdf_file['injection_parameters']['injection_snr'])
 
     # Define normalizing functions
     z_score = lambda x: (x-x.mean())/x.std()
@@ -99,16 +99,16 @@ def get_raw_data(hdf_file_name: str) -> tuple:
     with h5py.File(hdf_file_path, 'r') as hdf_file:
 
         # Input data
-        inputs_h1 = array((hdf_file['injection_samples'])['h1_strain'])[:,:,newaxis]
-        inputs_l1 = array((hdf_file['injection_samples'])['l1_strain'])[:,:,newaxis]
+        inputs_h1 = array(hdf_file['injection_samples']['h1_strain'])[:,:,newaxis]
+        inputs_l1 = array(hdf_file['injection_samples']['l1_strain'])[:,:,newaxis]
 
         # Label data   
-        labels_h1 = array((hdf_file['injection_parameters'])['h1_signal'])[:,:,newaxis]
-        labels_l1 = array((hdf_file['injection_parameters'])['l1_signal'])[:,:,newaxis]
+        labels_h1 = array(hdf_file['injection_parameters']['h1_signal'])[:,:,newaxis]
+        labels_l1 = array(hdf_file['injection_parameters']['l1_signal'])[:,:,newaxis]
 
         # Noise samples
-        noise_samples_h1 = array((hdf_file['noise_samples'])['h1_strain'])[:,:,newaxis]
-        noise_samples_l1 = array((hdf_file['noise_samples'])['l1_strain'])[:,:,newaxis]
+        noise_samples_h1 = array(hdf_file['noise_samples']['h1_strain'])[:,:,newaxis]
+        noise_samples_l1 = array(hdf_file['noise_samples']['l1_strain'])[:,:,newaxis]
 
     # Merging and normalizing input data
     inputs = concatenate((inputs_h1, inputs_l1), axis = 2)
@@ -131,7 +131,11 @@ def get_raw_data(hdf_file_name: str) -> tuple:
 
 def get_injection_parameters(hdf_file_name: str) -> dict:
     """
-    Retrieves the injection parameters of HDF file
+    Retrieves the injection parametdictionary = dict(a=[1,2,3], b=[True,False,True])
+
+array_size = len(next(iter(dictionary.values())))
+
+print(array_size)ers of HDF file
 
     Returns:
         Numpy array of dictionaries of the injection parameters
@@ -147,11 +151,11 @@ def get_injection_parameters(hdf_file_name: str) -> dict:
         keys = 'mass1', 'mass2', 'spin1z', 'spin2z', 'ra', 'dec', 'coa_phase', 'inclination', 'polarization', 'injection_snr'
         injection_parameters_dict = {}
         for key in keys:
-            injection_parameters_dict[key] = array((hdf_file['injection_parameters'])[key])
+            injection_parameters_dict[key] = array(hdf_file['injection_parameters'][key])
     
     return injection_parameters_dict
 
-def get_time_info(hdf_file_name: str, idx: int) -> float:
+def get_time_info(hdf_file_name: str, idx: int) -> dict:
     """
     Retrieves the event time of an event of a given sample
 

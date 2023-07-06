@@ -15,13 +15,17 @@ import os
 from utils.configfiles import read_json_config
 from utils.data_processing import get_injection_parameters, get_raw_data, get_time_info
 
+# -----------------------------------------------------------------------------
+# FUNCTION DEFINITIONS
+# -----------------------------------------------------------------------------
+
 def get_arguments() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(description='Plots the input, label, and prediction of one sample '
                                      'from both detectors')
     
     parser.add_argument('--testing-config',
-                        default='default_testing.json',
+                        default='testing.json',
                         type=str,
                         help='Name of the JSON file the model used to test, Default: default_testing.json')
     parser.add_argument('--sample-id',
@@ -101,10 +105,11 @@ if __name__ == '__main__':
     ax1[1][1].tick_params(left = False)
     ax1[2][1].tick_params(left = False)
         
-    for idx, detectors in enumerate(['H1', 'L1']):
+    for idx, detector in enumerate(['H1', 'L1']):
       
-        ax1[0][idx].set_title(detectors)
+        ax1[0][idx].set_title(detector)
         
+        # Plots inputs
         ax1[0][idx].plot(time_range, inputs[sample_id,:,idx])
         
         ax1[0][idx].set_ylim(-120,120)
@@ -112,6 +117,7 @@ if __name__ == '__main__':
         
         ax1[1][idx].set_ylim(-1.2, 1.2)
 
+        # Plots raw signal
         if has_injection:
             ax1[1][idx].plot(time_range, labels[sample_id,:,idx], color = 'C1')
         else:
@@ -119,11 +125,13 @@ if __name__ == '__main__':
             
         ax1[1][idx].tick_params('y', colors='C1', labelsize=8)
         
+        # Plots prediction
         ax1[2][idx].plot(time_range, preds[sample_id,:,idx], color = 'C2')
         
         ax1[2][idx].set_ylim(-1.2, 1.2)
         ax1[2][idx].tick_params('y', colors='C2', labelsize=8)
         
+        # Focuses the view around the event if sample has an injection
         if has_injection:
             ax1[0][idx].set_xlim(-0.15, .05) 
             ax1[1][idx].set_xlim(-0.15, .05) 
@@ -131,20 +139,26 @@ if __name__ == '__main__':
             ax1[0][idx].axvline(x=0, color='black', ls='--', lw=1)
             ax1[1][idx].axvline(x=0, color='black', ls='--', lw=1)
             ax1[2][idx].axvline(x=0, color='black', ls='--', lw=1)
+        else:
+            ax1[0][idx].set_xlim(0, sample_length) 
+            ax1[1][idx].set_xlim(0, sample_length) 
+            ax1[2][idx].set_xlim(0, sample_length) 
 
         # Set x-labels
         ax1[0][idx].set_xticklabels([])
         ax1[1][idx].set_xticklabels([])
         ax1[2][idx].set_xlabel('Time from event (sec)')
       
+    # Adds subtitle for injection parameters
     if has_injection: 
         keys = 'mass1', 'mass2', 'spin1z', 'spin2z', 'ra', 'dec', 'coa_phase', 'inclination', 'polarization', 'injection_snr'
         string = ', '.join(['{} = {:.2f}'.format(_, injection_parameters[_][sample_id]) for _ in keys])
     else:
         string = '(sample does not contain an injection)'
+
     plt.figtext(0.5, 0.9, f'Injection Parameters:\n{string}', fontsize=8, ha='center')
     
-    # Adjust the size and sapcing of the subplots
+    # Adjust the size and spacing of the subplots
     plt.gcf().set_size_inches(12, 6, forward=True)
     plt.tight_layout(rect=[0,0,1,0.9])
     plt.subplots_adjust(wspace=.05, hspace=0)

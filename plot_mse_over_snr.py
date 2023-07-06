@@ -23,7 +23,7 @@ def get_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Saves a plot of the MSEs over the SNRs of the testing dataset')
 
     parser.add_argument('--testing-config',
-                        default='default_testing.json',
+                        default='testing.json',
                         type=str,
                         help='Name of the JSON file the model used to test')
     
