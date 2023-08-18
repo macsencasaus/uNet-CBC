@@ -61,11 +61,10 @@ if __name__ == '__main__':
     if args.sample_id < 0 or args.sample_id >= len(inputs):
       raise IndexError('Sample-id is not within bounds')
     
-    print(len(snrs))
     
     # Check if the sample has injection
     has_injection = sample_id < len(snrs)
-    print(has_injection)
+
     # Get predictions
     model_name = config['model_name']
     preds_name = f'{model_name[:-3]}_predictions.npy'

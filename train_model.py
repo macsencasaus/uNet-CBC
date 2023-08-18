@@ -26,7 +26,7 @@ def get_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Trains and saves the U-net.')
 
     parser.add_argument('--training-config',
-                        default='default_training.json',
+                        default='training.json',
                         type=str,
                         help='Name the JSON file the program uses to '
                         'compile the model, Default: default_training.json')
