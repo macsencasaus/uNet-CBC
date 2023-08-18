@@ -111,7 +111,7 @@ def get_raw_data(hdf_file_name: str) -> tuple:
         noise_samples_l1 = array((hdf_file['noise_samples'])['l1_strain'])[:,:,newaxis]
 
     # Merging and normalizing input data
-    inputs = concatenate((inputs_h1, inputs_l1), axis = 2)
+    inputs = concatenate((inputs_h1, inputs_l1), axis=2)
 
     # Merging and normalizing label data
     labels = concatenate((labels_h1, labels_l1), axis=2)
@@ -151,13 +151,12 @@ def get_injection_parameters(hdf_file_name: str) -> dict:
     
     return injection_parameters_dict
 
-def get_time_info(hdf_file_name: str, idx: int) -> float:
+def get_time_info(hdf_file_name: str) -> float:
     """
     Retrieves the event time of an event of a given sample
 
     Args:
         hdf_file_path: path to the hdf file with data
-        idx: index of the sample of the event time to be retrieved
 
     Returns:
         A float of the event time

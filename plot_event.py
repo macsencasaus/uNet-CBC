@@ -21,9 +21,9 @@ def get_arguments() -> argparse.Namespace:
                                      'from both detectors')
     
     parser.add_argument('--testing-config',
-                        default='default_testing.json',
+                        default='testing.json',
                         type=str,
-                        help='Name of the JSON file the model used to test, Default: default_testing.json')
+                        help='Name of the JSON file the model used to test, Default: testing.json')
     parser.add_argument('--sample-id',
                         help='ID of the sample to be view (an integer '
                         'between 0 and n_injection_samples + n_noise_samples),'
@@ -60,7 +60,6 @@ if __name__ == '__main__':
     sample_id = int(args.sample_id)
     if args.sample_id < 0 or args.sample_id >= len(inputs):
       raise IndexError('Sample-id is not within bounds')
-    
     
     # Check if the sample has injection
     has_injection = sample_id < len(snrs)

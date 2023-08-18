@@ -31,15 +31,10 @@ python apply_model.py
 
 This will generate predictions and evaluate the model based on the demo testing data and save it to the `./outputs/predictions` directory.
 
-Finally, you can use the `plot_event.py` script to visualize the model's predictions in comparison against the testing data found in the `./outputs/figures` directory. These outputs look something like this :
+Finally, you can use the `plot_event.py` script to visualize the model's predictions in comparison against the testing data found in the `./outputs/figures` directory. These outputs look something like this:
 
 
-## Documentation
-
-The documentation for all code can be found as `.md` files in the `./docs` directory.
-
-
-## Authors
+## Author
 
 The code in this repository is developed by [Macsen Casaus](https://github.com/macsencasaus).
 

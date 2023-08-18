@@ -25,10 +25,10 @@ def get_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Tests and saves the results of the U-net.')
 
     parser.add_argument('--testing-config',
-                        default='default_testing.json',
+                        default='testing.json',
                         type=str,
                         help='Name the JSON file the program uses to '
-                        'evaluate the model, Default: default_testing.json')
+                        'evaluate the model, Default: testing.json')
     parser.add_argument('--save-predictions',
                         action='store_true',
                         default=True,

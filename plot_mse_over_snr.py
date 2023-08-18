@@ -26,7 +26,7 @@ def get_arguments() -> argparse.Namespace:
     parser.add_argument('--testing-config',
                         default='testing.json',
                         type=str,
-                        help='Name of the JSON file the model used to test')
+                        help='Name of the JSON file the model used to test, Default: testing.json')
     
     arguments = parser.parse_args()
     return arguments

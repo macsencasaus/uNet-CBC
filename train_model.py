@@ -29,7 +29,7 @@ def get_arguments() -> argparse.Namespace:
                         default='training.json',
                         type=str,
                         help='Name the JSON file the program uses to '
-                        'compile the model, Default: default_training.json')
+                        'compile the model, Default: training.json')
     parser.add_argument('--save-model',
                         action='store_true',
                         default=True,
@@ -69,10 +69,6 @@ if __name__ == '__main__':
     
     hdf_file_name = config['training_hdf_file_name']
     X_train, y_train = get_normalized_data(hdf_file_name)
-
-    # -------------------------------------------------------------------------
-    # ACQUIRING, COMPILING, AND TRAINING THE 
-    # -------------------------------------------------------------------------
 
     # Get time data
     time_info = get_time_info(hdf_file_name, 0)
