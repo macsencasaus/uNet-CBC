@@ -29,7 +29,7 @@ def get_arguments() -> argparse.Namespace:
                         default='training.json',
                         type=str,
                         help='Name the JSON file the program uses to '
-                        'compile the model, Default: default_training.json')
+                        'compile the model, Default: training.json')
     parser.add_argument('--save-model',
                         action='store_true',
                         default=True,

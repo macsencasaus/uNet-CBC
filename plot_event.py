@@ -27,7 +27,7 @@ def get_arguments() -> argparse.Namespace:
     parser.add_argument('--testing-config',
                         default='testing.json',
                         type=str,
-                        help='Name of the JSON file the model used to test, Default: default_testing.json')
+                        help='Name of the JSON file the model used to test, Default: testing.json')
     parser.add_argument('--sample-id',
                         help='ID of the sample to be view (an integer '
                         'between 0 and n_injection_samples + n_noise_samples),'
@@ -65,11 +65,9 @@ if __name__ == '__main__':
     if args.sample_id < 0 or args.sample_id >= len(inputs):
       raise IndexError('Sample-id is not within bounds')
     
-    print(len(snrs))
-    
     # Check if the sample has injection
     has_injection = sample_id < len(snrs)
-    print(has_injection)
+
     # Get predictions
     model_name = config['model_name']
     preds_name = f'{model_name[:-3]}_predictions.npy'
@@ -105,11 +103,10 @@ if __name__ == '__main__':
     ax1[1][1].tick_params(left = False)
     ax1[2][1].tick_params(left = False)
         
-    for idx, detector in enumerate(['H1', 'L1']):
+    for idx, detectors in enumerate(['H1', 'L1']):
       
-        ax1[0][idx].set_title(detector)
+        ax1[0][idx].set_title(detectors)
         
-        # Plots inputs
         ax1[0][idx].plot(time_range, inputs[sample_id,:,idx])
         
         ax1[0][idx].set_ylim(-120,120)
@@ -117,7 +114,6 @@ if __name__ == '__main__':
         
         ax1[1][idx].set_ylim(-1.2, 1.2)
 
-        # Plots raw signal
         if has_injection:
             ax1[1][idx].plot(time_range, labels[sample_id,:,idx], color = 'C1')
         else:
@@ -125,7 +121,6 @@ if __name__ == '__main__':
             
         ax1[1][idx].tick_params('y', colors='C1', labelsize=8)
         
-        # Plots prediction
         ax1[2][idx].plot(time_range, preds[sample_id,:,idx], color = 'C2')
         
         ax1[2][idx].set_ylim(-1.2, 1.2)
