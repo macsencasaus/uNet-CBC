@@ -33,6 +33,9 @@ This will generate predictions and evaluate the model based on the demo testing 
 
 Finally, you can use the `plot_event.py` script to visualize the model's predictions in comparison against the testing data found in the `./outputs/figures` directory. These outputs look something like this :
 
+![](./docs/images/injection_117.png)
+
+You may specify a different sample by using the `--sample-id` flag with the index of the sample you desire to plot.
 
 ## Documentation
 
