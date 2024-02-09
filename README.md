@@ -37,12 +37,7 @@ Finally, you can use the `plot_event.py` script to visualize the model's predict
 
 You may specify a different sample by using the `--sample-id` flag with the index of the sample you desire to plot.
 
-## Documentation
-
-The documentation for all code can be found as `.md` files in the `./docs` directory.
-
-
-## Authors
+## Author
 
 The code in this repository is developed by [Macsen Casaus](https://github.com/macsencasaus).
 

@@ -28,7 +28,7 @@ def get_arguments() -> argparse.Namespace:
                         default='testing.json',
                         type=str,
                         help='Name the JSON file the program uses to '
-                        'evaluate the model, Default: default_testing.json')
+                        'evaluate the model, Default: testing.json')
     parser.add_argument('--save-predictions',
                         action='store_true',
                         default=True,
@@ -102,4 +102,3 @@ if __name__ == '__main__':
     print('')
     print('Total runtime: {:.1f}s'.format(time.time()-script_start))
     print('')
-

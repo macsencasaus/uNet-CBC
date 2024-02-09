@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 
+from numpy import array
 from utils.configfiles import read_json_config
 from utils.data_processing import get_raw_data, get_injection_parameters
 
@@ -25,7 +26,7 @@ def get_arguments() -> argparse.Namespace:
     parser.add_argument('--testing-config',
                         default='testing.json',
                         type=str,
-                        help='Name of the JSON file the model used to test')
+                        help='Name of the JSON file the model used to test, Default: testing.json')
     
     arguments = parser.parse_args()
     return arguments
@@ -66,7 +67,7 @@ if __name__ == '__main__':
     def mse(actual: np.ndarray, predictions: np.ndarray) -> float:
         return ((actual - predictions) ** 2).mean()
     
-    mses = np.array(list(map(mse, labels, preds)))[:len(snrs)]
+    mses = array(list(map(mse, labels, preds)))[:len(snrs)]
 
     # Plot and save figure
     plt.scatter(snrs, mses, s=10)
